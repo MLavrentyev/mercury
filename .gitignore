@@ -1,0 +1,5 @@
+# Editor files
+.idea/
+
+# Mypy
+.mypy_cache/

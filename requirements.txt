@@ -1,0 +1,2 @@
+Flask_SocketIO==4.3.1
+PyYAML==5.3.1
