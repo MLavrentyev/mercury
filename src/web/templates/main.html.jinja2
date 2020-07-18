@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mercury</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/altaltfavicon.png') }}" />
+
+    <style type="text/css">
+        @font-face {
+            font-family: Eurostile;
+            src: {{ url_for('static', filename='fonts/eurostile.ttf') }}
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+</head>
+<body>
+    <div class="layout">
+        <div id="speed" class="dataDisplay">
+            <div>
+                <span class="value">55</span>
+            </div>
+            <div class="label">mph</div>
+        </div>
+        <div id="gear" class="dataDisplay main">
+            <div>
+                <span class="value">--</span>
+            </div>
+            <div class="label">gear</div>
+        </div>
+        <div id="coolantTemp" class="dataDisplay">
+            <div>
+                <span class="value">95.7</span>
+                <span class="unit">°C</span>
+            </div>
+            <div class="label">coolant temp</div>
+        </div>
+        <div id="rpm" class="dataDisplay">
+            <div>
+                <span class="value">12,500</span>
+            </div>
+            <div class="label">rpm</div>
+        </div>
+        <div id="oilPressure" class="dataDisplay">
+            <div>
+                <span class="value">60</span>
+                <span class="unit">psi</span>
+            </div>
+            <div class="label">oil pressure</div>
+        </div>
+    </div>
+</body>
+</html>
