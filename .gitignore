@@ -3,3 +3,8 @@
 
 # Mypy
 .mypy_cache/
+
+# Compiled files
+*.pyc
+*.pyd
+__pycache__/
