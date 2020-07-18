@@ -1,0 +1,13 @@
+settings:
+  connection:
+    port: 81
+
+  data:
+    temp-unit: celsius  # [fahrenheit | celsius]
+    pressure-unit: psi  # [psi | kPa]
+    speed-unit: mph  # [mph | kph]
+    max-rpm: 13500
+
+  display:
+    port: 5000
+    refresh-rate: 1.4  # seconds
