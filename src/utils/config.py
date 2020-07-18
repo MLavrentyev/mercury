@@ -1,4 +1,5 @@
 import yaml
+import pint
 
 
 class Config:
@@ -18,3 +19,7 @@ class Config:
                 raise Exception()
 
         return currData
+
+
+unit = pint.UnitRegistry()
+

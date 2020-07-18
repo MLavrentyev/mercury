@@ -1,6 +1,6 @@
 settings:
   connection:
-    port: 81
+    port: 8080
 
   data:
     temp-unit: celsius  # [fahrenheit | celsius]
