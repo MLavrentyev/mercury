@@ -21,12 +21,12 @@ class StubDataReceiver(DataReceiver):
 
     def getData(self) -> DataPoint:
         return DataPoint(
-            coolantTemp=97.3 * unit.degC,
-            oilPressure=60 * unit.psi,
-            batteryVoltage=12.3 * unit.volt,
-            lambdaValue=14.5,
-            engineRpm=12500 * unit.rpm,
-            throttlePosition=0.83,
+            coolantTemp=unit.Quantity(97.3, unit.degC),
+            oilPressure=unit.Quantity(60, unit.psi),
+            batteryVoltage=unit.Quantity(12.3, unit.volt),
+            lambdaValue=unit.Quantity(14.5),
+            engineRpm=unit.Quantity(12500, unit.rpm),
+            throttlePosition=unit.Quantity(0.83),
         )
 
 
