@@ -1,4 +1,8 @@
 settings:
+  app:
+    name: Mercury
+    version: v0.1.0
+
   connection:
     port: 8080
 
