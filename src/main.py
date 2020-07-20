@@ -1,7 +1,6 @@
+import time
 from multiprocessing import Process, Queue, Lock
-from queue import Empty
 from abc import ABC, abstractmethod
-from flask_socketio import SocketIO
 from utils.config import Config
 from utils.logger import Logger, LogType
 from data.data import DataPoint
@@ -22,12 +21,9 @@ class Runner(ABC):
     def execute(self, queueConn: Queue, lock: Lock, *args):
         pass
 
-    def start(self, waitUntilFinished=False):
+    def start(self):
         self.process.start()
         self.logger.log(f"Started {type(self).__name__} process", LogType.INFO)
-
-        if waitUntilFinished:
-            self.process.join()
 
     def waitUntilFinished(self):
         self.process.join()
@@ -72,6 +68,16 @@ class DataReceiverRunner(Runner):
                     queueConn.put_nowait(latestData)
 
 
+class LoggerFlusherRunner(Runner):
+    def execute(self, queueConn: Queue, lock: Lock, *args):
+        assert len(args) == 1
+        pollTime: float = args[0]
+
+        while True:
+            time.sleep(pollTime)
+            self.logger.flush()
+
+
 if __name__=="__main__":
     config = Config("config.yaml")
     logger = Logger(logDirectory="logs/", stdoutLevel=LogType.DEBUG)
@@ -79,7 +85,11 @@ if __name__=="__main__":
     webServerRunner = WebServerRunner(config, logger)
     webSocketRunner = WebSocketRunner(config, logger)
     dataReceiverRunner = DataReceiverRunner(config, logger, StubDataReceiver(config))
+    loggerFlusherRunner = LoggerFlusherRunner(config, logger, 10)
 
     webServerRunner.start()
     webSocketRunner.start()
     dataReceiverRunner.start()
+    loggerFlusherRunner.start()
+
+    dataReceiverRunner.waitUntilFinished()

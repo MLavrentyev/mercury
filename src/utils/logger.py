@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from enum import Enum
+from multiprocessing import Queue
 import colorama
 
 
@@ -28,18 +29,21 @@ class Logger:
                                     datetime.now().strftime("%Y_%m_%d"),
                                     datetime.now().strftime("%H_%M_%S.log"))
         os.makedirs(os.path.dirname(self.logFile), exist_ok=True)
-        self.storedLogs = []
+        self.storedLogs: Queue = Queue()
 
     def log(self, message: str, logType: LogType):
         datetimeBlock = datetime.now().strftime("%d %b %H:%M:%S")
         logtypeBlock = f"[{logType.name.center(7)}]"
 
-        self.storedLogs.append(f"{logtypeBlock} {datetimeBlock}> {message}\n")
+        self.storedLogs.put(f"{logtypeBlock} {datetimeBlock}> {message}")
 
         if self.stdoutLevel and logType.value <= self.stdoutLevel.value:
             print(f"{Logger.colors[logType]}{logtypeBlock}{colorama.Style.RESET_ALL} {datetimeBlock}> {message}")
 
-    def flush(self):
+    def flush(self, logFlushing=False):
+        if logFlushing:
+            self.log(f"Flushing logs to {os.path.basename(self.logFile)}", LogType.INFO)
+
         with open(self.logFile, "a") as stream:
-            stream.writelines(self.storedLogs)
-            self.storedLogs = []
+            while not self.storedLogs.empty():
+                stream.write(self.storedLogs.get_nowait() + "\n")
