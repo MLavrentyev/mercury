@@ -75,7 +75,7 @@ class LoggerFlusherRunner(Runner):
 
         while True:
             time.sleep(pollTime)
-            self.logger.flush()
+            self.logger.flush(logFlushingEvent=True)
 
 
 if __name__=="__main__":

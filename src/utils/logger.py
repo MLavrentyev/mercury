@@ -40,8 +40,8 @@ class Logger:
         if self.stdoutLevel and logType.value <= self.stdoutLevel.value:
             print(f"{Logger.colors[logType]}{logtypeBlock}{colorama.Style.RESET_ALL} {datetimeBlock}> {message}")
 
-    def flush(self, logFlushing=False):
-        if logFlushing:
+    def flush(self, logFlushingEvent=False):
+        if logFlushingEvent:
             self.log(f"Flushing logs to {os.path.basename(self.logFile)}", LogType.INFO)
 
         with open(self.logFile, "a") as stream:
