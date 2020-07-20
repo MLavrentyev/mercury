@@ -1,4 +1,5 @@
 from multiprocessing import Process, Queue, Lock
+from queue import Empty
 from abc import ABC, abstractmethod
 from flask_socketio import SocketIO
 from utils.config import Config
@@ -21,30 +22,33 @@ class Runner(ABC):
     def execute(self, queueConn: Queue, lock: Lock, *args):
         pass
 
-    def start(self):
+    def start(self, waitUntilFinished=False):
         self.process.start()
+        self.logger.log(f"Started {type(self).__name__} process", LogType.INFO)
+
+        if waitUntilFinished:
+            self.process.join()
+
+    def waitUntilFinished(self):
+        self.process.join()
 
     def close(self):
         self.process.kill()
         self.process.close()
+        self.logger.log(f"Stopped {type(self).__name__} process", LogType.INFO)
 
 
 class WebServerRunner(Runner):
-    def execute(self, queueConn, lock, *args):
-        assert len(args) == 1
-        socket: SocketIO = args[0]
-
-        socket.run(app)
+    def execute(self, queueConn: Queue, lock: Lock, *args):
+        websocket.run(app)
 
 
 class WebSocketRunner(Runner):
-    def execute(self, queueConn, lock, *args):
-        assert len(args) == 1
-        socket: SocketIO = args[0]
-
+    def execute(self, queueConn: Queue, lock: Lock, *args):
         while True:
-            data: DataPoint = queueConn.get(block=True)
-            sendData(socket, data)
+            with lock:
+                data: DataPoint = queueConn.get(block=True)
+                sendData(websocket, data)
 
 
 class DataReceiverRunner(Runner):
@@ -60,6 +64,7 @@ class DataReceiverRunner(Runner):
                     while not queueConn.empty():
                         queueConn.get_nowait()
 
+                    assert queueConn.empty()
                     queueConn.put_nowait(latestData)
 
 
@@ -67,6 +72,10 @@ if __name__=="__main__":
     config = Config("config.yaml")
     logger = Logger(logDirectory="logs/", stdoutLevel=LogType.DEBUG)
 
-    webServerRunner = WebServerRunner(config, logger, websocket)
-    webSocketRunner = WebSocketRunner(config, logger, websocket)
+    webServerRunner = WebServerRunner(config, logger)
+    webSocketRunner = WebSocketRunner(config, logger)
     dataReceiverRunner = DataReceiverRunner(config, logger, StubDataReceiver(config))
+
+    webServerRunner.start()
+    webSocketRunner.start()
+    dataReceiverRunner.start()
