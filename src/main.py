@@ -6,7 +6,7 @@ from utils.config import Config
 from utils.logger import Logger, LogType
 from data.data import DataPoint
 from data.receiver import DataReceiver, SerialDataReceiver, StubDataReceiver
-from web.server import app, websocket, sendData
+from web.server import app, turnOffFlaskLogging, websocket, sendData
 
 
 class Runner(ABC):
@@ -40,9 +40,11 @@ class Runner(ABC):
 
 class WebServerRunner(Runner):
     def execute(self, queueConn: Queue, lock: Lock, *args):
+        turnOffFlaskLogging()
         websocket.run(app,
                       port=self.config.getSetting("dashboard.display.port"),
-                      debug=self.config.getSetting("dashboard.display.debug"))
+                      debug=self.config.getSetting("dashboard.display.debug"),
+                      use_reloader=False)
 
 
 class WebSocketRunner(Runner):
