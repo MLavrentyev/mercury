@@ -28,18 +28,18 @@ class Logger:
                                     datetime.now().strftime("%Y_%m_%d"),
                                     datetime.now().strftime("%H_%M_%S.log"))
         os.makedirs(os.path.dirname(self.logFile), exist_ok=True)
-        self.stream = open(self.logFile, "w")
+        self.storedLogs = []
 
     def log(self, message: str, logType: LogType):
         datetimeBlock = datetime.now().strftime("%d %b %H:%M:%S")
         logtypeBlock = f"[{logType.name.center(7)}]"
 
-        self.stream.write(f"{logtypeBlock} {datetimeBlock}> {message}\n")
-        self.stream.flush()
+        self.storedLogs.append(f"{logtypeBlock} {datetimeBlock}> {message}\n")
 
         if self.stdoutLevel and logType.value <= self.stdoutLevel.value:
             print(f"{Logger.colors[logType]}{logtypeBlock}{colorama.Style.RESET_ALL} {datetimeBlock}> {message}")
 
-    def close(self):
-        self.stream.close()
-
+    def flush(self):
+        with open(self.logFile, "a") as stream:
+            stream.writelines(self.storedLogs)
+            self.storedLogs = []
