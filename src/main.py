@@ -40,7 +40,9 @@ class Runner(ABC):
 
 class WebServerRunner(Runner):
     def execute(self, queueConn: Queue, lock: Lock, *args):
-        websocket.run(app)
+        websocket.run(app,
+                      port=self.config.getSetting("dashboard.display.port"),
+                      debug=self.config.getSetting("dashboard.display.debug"))
 
 
 class WebSocketRunner(Runner):
