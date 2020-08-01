@@ -16,3 +16,8 @@ dashboard:
     port: 5000
     refresh-rate: 1.4  # seconds
     debug: true
+
+  logger:
+    level: DEBUG  # [ERROR | WARNING | INFO | DEBUG]
+    log-flushing: false
+    flush-frequency: 10  # seconds

@@ -70,22 +70,22 @@ class DataReceiverRunner(Runner):
 
 class LoggerFlusherRunner(Runner):
     def execute(self, queueConn: Queue, lock: Lock, *args):
-        assert len(args) == 1
-        pollTime: float = args[0]
+        flushFrequency = self.config.getSetting("dashboard.logger.flush-frequency")
+        logFlushing = self.config.getSetting("dashboard.logger.log-flushing")
 
         while True:
-            time.sleep(pollTime)
-            self.logger.flush(logFlushingEvent=True)
+            time.sleep(flushFrequency)
+            self.logger.flush(logFlushingEvent=logFlushing)
 
 
 if __name__=="__main__":
     config = Config("config.yaml")
-    logger = Logger(logDirectory="logs/", stdoutLevel=LogType.DEBUG)
+    logger = Logger(logDirectory="logs/", stdoutLevel=LogType[config.getSetting("dashboard.logger.level")])
 
     webServerRunner = WebServerRunner(config, logger)
     webSocketRunner = WebSocketRunner(config, logger)
     dataReceiverRunner = DataReceiverRunner(config, logger, StubDataReceiver(config))
-    loggerFlusherRunner = LoggerFlusherRunner(config, logger, 10)
+    loggerFlusherRunner = LoggerFlusherRunner(config, logger)
 
     webServerRunner.start()
     webSocketRunner.start()
