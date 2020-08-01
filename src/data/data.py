@@ -1,3 +1,4 @@
+import json
 
 
 class DataPoint:
@@ -10,6 +11,6 @@ class DataPoint:
         self.throttlePosition = kwargs.get("throttlePosition")
         # TODO: think about other data (e.g. wheel speed)
 
-    def toDictionary(self):
-        return vars(self)
+    def toJson(self):
+        return json.dumps(vars(self))
 
