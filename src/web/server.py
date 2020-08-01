@@ -28,10 +28,5 @@ def main():
     return render_template("main.html.jinja2")
 
 
-@app.errorhandler(404)
-def pageNotFound():
-    return render_template('404.html.jinja2'), 404
-
-
 def sendData(socket: SocketIO, data: DataPoint):
     socket.send(data.toDictionary())
