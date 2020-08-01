@@ -34,8 +34,4 @@ def pageNotFound():
 
 
 def sendData(socket: SocketIO, data: DataPoint):
-    ...
-
-
-if __name__ == "__main__":
-    websocket.run(app)
+    socket.send(data.toDictionary())
