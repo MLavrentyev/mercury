@@ -17,6 +17,9 @@ dashboard:
     refresh-rate: 1.4  # seconds
     debug: true
 
+  websocket:
+    port: 80
+
   logger:
     level: DEBUG  # [ERROR | WARNING | INFO | DEBUG]
     log-flushing: false
