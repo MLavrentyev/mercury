@@ -1,12 +1,9 @@
 import logging
 import click
 from flask import Flask, render_template
-from flask_socketio import SocketIO, send
-from data.data import DataPoint
 
 
 app = Flask("Mercury", template_folder="src/web/templates", static_folder="src/web/static")
-websocket = SocketIO(app)
 
 
 def turnOffFlaskLogging():
@@ -26,7 +23,3 @@ def turnOffFlaskLogging():
 @app.route("/")
 def main():
     return render_template("main.html.jinja2")
-
-
-def sendData(socket: SocketIO, data: DataPoint):
-    socket.send(data.toDictionary())
