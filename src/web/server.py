@@ -22,4 +22,4 @@ def turnOffFlaskLogging():
 
 @app.route("/")
 def main():
-    return render_template("main.html.jinja2")
+    return render_template("main.html.jinja2", websocketPort=80)
