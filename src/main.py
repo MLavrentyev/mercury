@@ -1,11 +1,14 @@
+import asyncio
 import time
 from multiprocessing import Process, Queue, Lock
+from queue import Empty
 from abc import ABC, abstractmethod
 from utils.config import Config
 from utils.logger import Logger, LogType
 from data.data import DataPoint
 from data.receiver import DataReceiver, SerialDataReceiver, StubDataReceiver
-from web.server import app, turnOffFlaskLogging, websocket, sendData
+from web.server import turnOffFlaskLogging, app
+from web.socket import Websocket
 
 
 class Runner(ABC):
@@ -37,18 +40,17 @@ class Runner(ABC):
 class WebServerRunner(Runner):
     def execute(self, queueConn: Queue, lock: Lock, *args):
         turnOffFlaskLogging()
-        websocket.run(app,
-                      port=self.config.getSetting("dashboard.display.port"),
-                      debug=self.config.getSetting("dashboard.display.debug"),
-                      use_reloader=False)
+        app.run(host="localhost",
+                port=self.config.getSetting("dashboard.display.port"),
+                debug=self.config.getSetting("dashboard.display.debug"),
+                use_reloader=False)
 
 
 class WebSocketRunner(Runner):
     def execute(self, queueConn: Queue, lock: Lock, *args):
-        while True:
-            with lock:
-                data: DataPoint = queueConn.get(block=True)
-                sendData(websocket, data)
+        with Websocket(self.config, self.logger, queueConn, self.lock) as dataSender:
+            asyncio.get_event_loop().run_until_complete(dataSender)
+            asyncio.get_event_loop().run_forever()
 
 
 class DataReceiverRunner(Runner):
@@ -62,9 +64,11 @@ class DataReceiverRunner(Runner):
 
                 with lock:
                     while not queueConn.empty():
-                        queueConn.get_nowait()
+                        try:
+                            queueConn.get_nowait()
+                        except Empty:
+                            break
 
-                    assert queueConn.empty()
                     queueConn.put_nowait(latestData)
 
 
