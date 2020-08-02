@@ -1,4 +1,5 @@
 import json
+import pint
 
 
 class DataPoint:
@@ -12,5 +13,12 @@ class DataPoint:
         # TODO: think about other data (e.g. wheel speed)
 
     def toJson(self):
-        return json.dumps(vars(self))
+        quantities = vars(self)
+
+        jsonDict = {}
+        for quantityName in quantities:
+            quantity = quantities[quantityName]
+            jsonDict[quantityName] = {"value": quantity._magnitude, "unit": str(quantity._units)}
+
+        return json.dumps(jsonDict)
 
