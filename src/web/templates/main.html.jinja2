@@ -12,12 +12,10 @@
         }
     </style>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
-
     <script type="text/javascript">
-        window.addEventListener("load", function(){
-            document.documentElement.requestFullscreen();
-        });
+        let websocketPort = {{ websocketPort }};
     </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/socket.js') }}"></script>
 </head>
 <body>
     <div class="layout">
