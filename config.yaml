@@ -19,6 +19,7 @@ dashboard:
 
   websocket:
     port: 80
+    update-time: 0.1  # seconds
 
   logger:
     level: DEBUG  # [ERROR | WARNING | INFO | DEBUG]

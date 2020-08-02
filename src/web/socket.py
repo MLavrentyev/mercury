@@ -1,4 +1,5 @@
 import asyncio
+import time
 import websockets
 from multiprocessing import Lock, Queue
 from data.data import DataPoint
@@ -19,7 +20,9 @@ class Websocket:
                 with self.dataQueueLock:
                     data: DataPoint = self.dataQueue.get()
                     await websocketServer.send(data.toJson())
-                    break
+
+                updateTime: float = self.config.getSetting("dashboard.websocket.update-time")
+                time.sleep(updateTime)
 
         websocketPort = self.config.getSetting("dashboard.websocket.port")
         return websockets.serve(websocketHandler, "localhost", websocketPort)
