@@ -14,12 +14,11 @@ dashboard:
 
   display:
     port: 5000
-    refresh-rate: 1.4  # seconds
     debug: true
 
   websocket:
     port: 80
-    update-time: 0.1  # seconds
+    update-time: 0.175  # seconds
 
   logger:
     level: DEBUG  # [ERROR | WARNING | INFO | DEBUG]
