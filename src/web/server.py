@@ -1,9 +1,7 @@
 import logging
 import click
 from flask import Flask, render_template
-
-
-app = Flask("Mercury", template_folder="src/web/templates", static_folder="src/web/static")
+from utils.config import Config
 
 
 def turnOffFlaskLogging():
@@ -20,6 +18,13 @@ def turnOffFlaskLogging():
     click.secho = secho
 
 
-@app.route("/")
-def main():
-    return render_template("main.html.jinja2", websocketPort=80)
+def createApp(config: Config) -> Flask:
+    appName: str = config.getSetting("dashboard.app.name")
+    app = Flask(appName, template_folder="src/web/templates", static_folder="src/web/static")
+
+    @app.route("/")
+    def main():
+        websocketPort: int = config.getSetting("dashboard.websocket.port")
+        return render_template("main.html.jinja2", websocketPort=websocketPort)
+
+    return app
